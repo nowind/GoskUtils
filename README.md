@@ -1,1 +1,1 @@
-#goSkUtils
+# skUtils-go
