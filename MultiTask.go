@@ -1,7 +1,7 @@
 package skUtils
 
 type MultiTask struct {
-	pool [](*TimeInterval)
+	pool []*TimeInterval
 	data []interface{}
 	real RunnerFunc
 	SHour,SMin,SSec int
@@ -34,7 +34,7 @@ func NewMultiTask(real RunnerFunc) *MultiTask{
 	ret.main=NewTimeInterval(realrun)
 	return ret
 }
-func (self *MultiTask)RunWith(datas []interface{})  {
+func (self *MultiTask)RunWith(datas []interface{}) *MultiTask {
 	self.pool=make([]*TimeInterval,0,10)
 	self.data=make([]interface{},0,10)
 	for _,i:=range datas{
@@ -52,14 +52,17 @@ func (self *MultiTask)RunWith(datas []interface{})  {
 	self.main.IntMicroSec=self.IntMicroSec
 	self.main.IntMicroSecBefore=self.IntMicroSecBefore
 	self.main.RunWith(self)
+	return self
 }
-func (self *MultiTask)SetBefRun(run RunnerFunc)  {
+func (self *MultiTask)SetBefRun(run RunnerFunc) *MultiTask {
 	self.main.SetBefRun(run)
+	return self
 }
-func  (self *MultiTask)Stop()  {
+func  (self *MultiTask)Stop() *MultiTask {
 	for _,i:=range self.pool{
 		i.Stop()
 	}
 	self.main.Stop()
 	self.isStop=true
+	return self
 }

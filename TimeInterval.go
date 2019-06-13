@@ -37,8 +37,7 @@ func (self *TimeInterval) realRun(data interface{}){
 		self.IntMicroSecBefore=1000
 	}
  	errcount:=0
- 	for beftimer:=time.After(time.Duration(self.IntMicroSecBefore)*time.Microsecond);!self.isStop;{  //运行前处理逻辑
- 		<-beftimer
+ 	for beftimer:=time.After(time.Duration(self.IntMicroSecBefore)*time.Microsecond);!self.isStop && !NowPass(self.SHour,self.SMin,self.SSec);<-beftimer{  //运行前处理逻辑
  		if self.bf!=nil{ //有设置运行函数则执行
 			c,err:=self.bf(data)
 			if err !=nil { //运行后错误次数判断
@@ -89,23 +88,35 @@ func (self *TimeInterval) realRun(data interface{}){
 		self.end()
 	}
 }
-func (self *TimeInterval) RunWith(data interface{}) {
+func (self *TimeInterval) RunWith(data interface{}) *TimeInterval {
+	self.isStop=false
+	self.isFin=false
 	go self.realRun(data)
+	return self
 }
-func (self *TimeInterval) Run() {
-	self.RunWith(nil)
+func (self *TimeInterval) Run() *TimeInterval {
+	return self.RunWith(nil)
 }
 func (self *TimeInterval) Stop(){
 	self.isStop=true
 }
-func (self *TimeInterval) SetBeg(beg AOPFunc)  {
+func (self *TimeInterval) SetBeg(beg AOPFunc) *TimeInterval {
 	self.beg=beg
+	return self
 }
-func (self *TimeInterval) SetEnd(end AOPFunc)  {
+func (self *TimeInterval) SetEnd(end AOPFunc) *TimeInterval {
 	self.end=end
+	return self
 }
-func (self *TimeInterval) SetBefRun(befrun RunnerFunc)  {
+func (self *TimeInterval) SetBefRun(befrun RunnerFunc) *TimeInterval  {
 	self.bf=befrun
+	return self
+}
+func  (self *TimeInterval) SetTime(h,m,s int) *TimeInterval  {
+	self.SHour=h
+	self.SMin=m
+	self.SSec=s
+	return self
 }
 func (self *TimeInterval) IsOK() bool{
 	return self.isFin
