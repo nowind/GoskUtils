@@ -1,4 +1,4 @@
-module github.com/nowind/skUtils-go
+module github.com/nowind/GoskUtils
 
 go 1.12
 
