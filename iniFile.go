@@ -15,7 +15,7 @@ func  NewIni(path string)  *IniFile{
 	ret.iniF=f
 	return ret
 }
-func (self *IniFile) get(sec string ) map[string]string{
+func (self *IniFile) Get(sec string ) map[string]string{
 	s,err:=self.iniF.GetSection(sec)
 	if err==nil{
 		return s.KeysHash()

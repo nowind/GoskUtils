@@ -1,6 +1,8 @@
 package skUtils
 
-import "time"
+import (
+	"time"
+)
 
 func NowPass(sHour int,sMin int,sSec int) bool{
 	if sHour<0{
@@ -11,6 +13,6 @@ func NowPass(sHour int,sMin int,sSec int) bool{
 	if now.Hour()>12 && sHour <5{
 		day+=1
 	}
-	t:=time.Date(now.Year(),now.Month(),day,now.Hour(),now.Minute(),now.Second(),0,time.Local)
+	t:=time.Date(now.Year(),now.Month(),day,sHour,sMin,sSec,0,time.Local)
 	return now.After(t)
 }

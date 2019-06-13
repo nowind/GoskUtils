@@ -5,7 +5,7 @@ type MultiTask struct {
 	data []interface{}
 	real RunnerFunc
 	SHour,SMin,SSec int
-	IntMicroSec,IntMicroSecBefore int
+	IntMillSec,IntMillSecBefore int
 	Max int
 	isStop,isFin bool
 	main *TimeInterval
@@ -26,8 +26,8 @@ func NewMultiTask(real RunnerFunc) *MultiTask{
 	ret.SMin=0
 	ret.SSec=0
 	ret.Max=9999
-	ret.IntMicroSec=1000
-	ret.IntMicroSecBefore=1000
+	ret.IntMillSec=1000
+	ret.IntMillSecBefore=1000
 	ret.isStop=true
 	ret.isFin=false
 	ret.real=real
@@ -42,20 +42,31 @@ func (self *MultiTask)RunWith(datas []interface{}) *MultiTask {
 		newone.SHour=self.SHour
 		newone.SMin=self.SMin
 		newone.SSec=self.SSec
-		newone.IntMicroSec=self.IntMicroSec
+		newone.IntMillSec=self.IntMillSec
 		self.pool=append(self.pool,newone)
 		newone.RunWith(i)
 	}
 	self.main.SHour=self.SHour
 	self.main.SMin=self.SMin
 	self.main.SSec=self.SSec
-	self.main.IntMicroSec=self.IntMicroSec
-	self.main.IntMicroSecBefore=self.IntMicroSecBefore
+	self.main.IntMillSec=self.IntMillSec
+	self.main.IntMillSecBefore=self.IntMillSecBefore
 	self.main.RunWith(self)
 	return self
 }
 func (self *MultiTask)SetBefRun(run RunnerFunc) *MultiTask {
 	self.main.SetBefRun(run)
+	return self
+}
+func (self *MultiTask) SetTimeInt(bef,run int) *MultiTask  {
+	self.IntMillSecBefore=bef
+	self.IntMillSec=run
+	return self
+}
+func  (self *MultiTask) SetTime(h,m,s int) *MultiTask  {
+	self.SHour=h
+	self.SMin=m
+	self.SSec=s
 	return self
 }
 func  (self *MultiTask)Stop() *MultiTask {

@@ -73,7 +73,7 @@ func NewMulCheckedList(d map[string]string) *MulCheckedList{
 	m.m=model
 	return m
 }
-func (self *MulCheckedList)selList()  map[string]string{
+func (self *MulCheckedList)SelList()  map[string]string{
 	ret:=make(map[string]string)
 	for _,v := range self.mh.items{
 		if v._checked {
@@ -82,7 +82,7 @@ func (self *MulCheckedList)selList()  map[string]string{
 	}
 	return ret
 }
-func (self *MulCheckedList) selAll(){
+func (self *MulCheckedList) SelAll(){
 	for i,d:=range self.mh.items{
 		d._checked=true
 		self.m.RowChanged(i)

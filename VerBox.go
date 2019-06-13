@@ -4,7 +4,7 @@ import (
 	"github.com/andlabs/ui"
 	"image"
 )
-
+//TODO
 type VerBox struct {
 	*ui.Area
 	img *image.Image
@@ -12,7 +12,7 @@ type VerBox struct {
 type areaHandler struct {
 }
 func (areaHandler) Draw(a *ui.Area, dp *ui.AreaDrawParams){
-		ui.DrawNewPath()
+
 }
 func (areaHandler) MouseEvent(a *ui.Area, me *ui.AreaMouseEvent){
 
@@ -30,8 +30,8 @@ func (areaHandler) KeyEvent(a *ui.Area, ke *ui.AreaKeyEvent) (handled bool) {
 	return false
 }
 func NewVerBox() *VerBox{
-	imgbox:=ui.NewArea()
+	//imgbox:=ui.NewArea()
 	ret:=new(VerBox)
-	ret.Area=imgbox
-
+	//ret.Area=imgbox
+	return ret
 }

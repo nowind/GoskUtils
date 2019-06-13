@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"runtime"
 	"strings"
 )
 
@@ -20,22 +19,8 @@ type HARParser struct {
 
 
 
-const (
-	quickPathWindow = "d:\\tmp\\1.har"
-	quickPathMac = "/User/nowind/Document/1.har"
-)
-
-func QuickLoad() *HARParser {
-	return QuickLoadWithNo(0)
-}
-func QuickLoadWithNo(no int) *HARParser {
-	quickPath:=quickPathWindow
-	switch runtime.GOOS {
-		case "darwin":
-			quickPath=quickPathMac
-			break
-	}
-	return NewHARParserWithNo(quickPath,no)
+func NewHARParser(path string) *HARParser {
+	return NewHARParserWithNo(path,0)
 }
 func NewHARParserWithNo(path string, no int) *HARParser {
 	f, err := os.Open(path)
@@ -57,43 +42,43 @@ func NewHARParserWithNo(path string, no int) *HARParser {
 		ret.method = ent.Get("method").ToString()
 		ret.url = ent.Get("url").ToString()
 		// 以下要处理头
-		headers := ent.Get("headers").GetInterface().([]map[string]string)
+		headers := ent.Get("headers").GetInterface().([]interface {})
 		ret.headers= map[string][]string{}
 		for _, header := range headers {
-			name, ok1 := header["name"]
-			value, ok2 := header["value"]
-			if ok1 && ok2 {
+			_header:=header.(map[string]interface {})
+			name := _header["name"].(string)
+			value := _header["value"].(string)
 				if v, ok := ret.headers[name]; ok {
 					ret.headers[name] = append(v, value)
 				} else {
 					ret.headers[name] = []string{value}
 				}
 			}
-		}
+
 		//处理url查询
 		if ent.Get("queryString").ValueType() != jsoniter.InvalidValue {
-			queryString := ent.Get("queryString").GetInterface().([]map[string]string)
+			queryString := ent.Get("queryString").GetInterface().([]interface {})
 			ret.queryString = map[string]string{}
 			for _, queryItem := range queryString {
-				name, ok1 := queryItem["name"]
-				value, ok2 := queryItem["value"]
-				if ok1 && ok2 {
-					ret.queryString[name] = value
-				}
+				_queryItem:=queryItem.(map[string]interface {})
+				name:= _queryItem["name"].(string)
+				value := _queryItem["value"].(string)
+				ret.queryString[name] = value
+
 			}
 		}
 
 		if ent.Get("postData","mimeType").ValueType() != jsoniter.InvalidValue {
 			ret.mime=ent.Get("postData","mimeType").ToString()
 			if strings.Contains(ret.mime,"x-www-form-urlencoded"){
-				pParmas:=ent.Get("postData","params").GetInterface().([]map[string]string)
+				pParmas:=ent.Get("postData","params").GetInterface().([]interface {})
 				ret.postParmas= map[string]string{}
 				for _,v:=range pParmas{
-					name, ok1 := v["name"]
-					value, ok2 := v["value"]
-					if ok1 && ok2 {
-						ret.postParmas[name] = value
-					}
+					_v:=v.(map[string]interface {})
+					name := _v["name"].(string)
+					value:= _v["value"].(string)
+					ret.postParmas[name] = value
+
 				}
 				ret.postdata=ret.ReGenPayload(ret.postParmas)
 			}else{
