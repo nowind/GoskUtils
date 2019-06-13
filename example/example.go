@@ -50,7 +50,6 @@ func mainUi(){
 		d:=make([]byte,5000,5000)
 		i,_:=k.Body.Read(d)
 		asy.Println(string(d[:i]))
-		asy.Println(har.)
 	})
 	cc:=[]interface{}{"1","8","4"}
 	skUtils.NewMultiTask(func(d interface{}) (i int, e error) {
