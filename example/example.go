@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/andlabs/ui"
 	_ "github.com/andlabs/ui/winmanifest"
-	"github.com/nowind/skUtils-go"
+	skUtils "github.com/nowind/GoskUtils"
 )
 func mainUi(){
 	w:=ui.NewWindow("",600,600,false)
