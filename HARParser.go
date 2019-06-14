@@ -29,6 +29,7 @@ func NewHARParserWithNo(path string, no int) *HARParser {
 	if err != nil {
 		return ret
 	}
+	defer f.Close()
 	fr := bufio.NewReader(f)
 	size := fr.Size()
 	data := make([]byte, size)
