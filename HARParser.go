@@ -11,9 +11,9 @@ import (
 )
 
 type HARParser struct {
-	headers                           map[string][]string
-	method, url, body, postdata, mime string
-	postParmas, queryString           map[string]string
+	Headers                           map[string][]string
+	method, url, body, Postdata, mime string
+	PostParmas, QueryString           map[string]string
 	ok                                bool
 }
 
@@ -44,27 +44,27 @@ func NewHARParserWithNo(path string, no int) *HARParser {
 		ret.url = ent.Get("url").ToString()
 		// 以下要处理头
 		headers := ent.Get("headers").GetInterface().([]interface {})
-		ret.headers= map[string][]string{}
+		ret.Headers= map[string][]string{}
 		for _, header := range headers {
 			_header:=header.(map[string]interface {})
 			name := _header["name"].(string)
 			value := _header["value"].(string)
-				if v, ok := ret.headers[name]; ok {
-					ret.headers[name] = append(v, value)
+				if v, ok := ret.Headers[name]; ok {
+					ret.Headers[name] = append(v, value)
 				} else {
-					ret.headers[name] = []string{value}
+					ret.Headers[name] = []string{value}
 				}
 			}
 
 		//处理url查询
 		if ent.Get("queryString").ValueType() != jsoniter.InvalidValue {
 			queryString := ent.Get("queryString").GetInterface().([]interface {})
-			ret.queryString = map[string]string{}
+			ret.QueryString = map[string]string{}
 			for _, queryItem := range queryString {
 				_queryItem:=queryItem.(map[string]interface {})
 				name:= _queryItem["name"].(string)
 				value := _queryItem["value"].(string)
-				ret.queryString[name] = value
+				ret.QueryString[name] = value
 
 			}
 		}
@@ -73,17 +73,17 @@ func NewHARParserWithNo(path string, no int) *HARParser {
 			ret.mime=ent.Get("postData","mimeType").ToString()
 			if strings.Contains(ret.mime,"x-www-form-urlencoded"){
 				pParmas:=ent.Get("postData","params").GetInterface().([]interface {})
-				ret.postParmas= map[string]string{}
+				ret.PostParmas= map[string]string{}
 				for _,v:=range pParmas{
 					_v:=v.(map[string]interface {})
 					name := _v["name"].(string)
 					value:= _v["value"].(string)
-					ret.postParmas[name] = value
+					ret.PostParmas[name] = value
 
 				}
-				ret.postdata=ret.ReGenPayload(ret.postParmas)
+				ret.Postdata=ret.ReGenPayload(ret.PostParmas)
 			}else{
-				ret.postdata=ent.Get("postData","text").ToString()
+				ret.Postdata=ent.Get("postData","text").ToString()
 			}
 		}
 	}
@@ -112,10 +112,10 @@ func (self *HARParser)IsOK() bool  {
 	return self.ok
 }
 func (self *HARParser)getHeaderName(e string) (v []string,ok bool){
-	if v,ok=self.headers[e];ok{
+	if v,ok=self.Headers[e];ok{
 		return v,ok
 	}
-	if v,ok=self.headers[strings.ToLower(e)];ok{
+	if v,ok=self.Headers[strings.ToLower(e)];ok{
 		return v,ok
 	}
 	return nil,false
@@ -149,7 +149,7 @@ func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]stri
 	var err []error
 	switch strings.ToLower(self.method) {
 		case "post":
-			pd:=self.postdata
+			pd:=self.Postdata
 			if para!=nil {
 				pd=self.ReGenPayload(para)
 			}
