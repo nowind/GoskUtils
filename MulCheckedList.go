@@ -52,14 +52,26 @@ type MulCheckedList  struct{
 	mh *tablehandler
 	m *ui.TableModel
 }
-func NewMulCheckedList(d map[string]string) *MulCheckedList{
+func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
 	mh := new(tablehandler)
 	mh.datas= map[string]*tableitem{}
-	for k,v:=range d{
-		it:=&tableitem{name:k,value:v,_checked:false}
-		mh.items = append(mh.items, it)
-		mh.datas[k]=it
+	if sorted==nil{
+		for k,v:=range d{
+			it:=&tableitem{name:k,value:v,_checked:false}
+			mh.items = append(mh.items, it)
+			mh.datas[k]=it
+		}
+	} else {
+		for _,k:=range sorted{
+			if v,ok:=d[k];ok{
+				it:=&tableitem{name:k,value:v,_checked:false}
+				mh.items = append(mh.items, it)
+				mh.datas[k]=it
+			}
+
+		}
 	}
+
 	model := ui.NewTableModel(mh)
 	m:=new(MulCheckedList)
 	table := ui.NewTable(&ui.TableParams{
@@ -72,6 +84,9 @@ func NewMulCheckedList(d map[string]string) *MulCheckedList{
 	m.mh=mh
 	m.m=model
 	return m
+}
+func NewMulCheckedList(d map[string]string) *MulCheckedList{
+	return NewMulCheckedListSort(d,nil)
 }
 func (self *MulCheckedList)SelList()  map[string]string{
 	ret:=make(map[string]string)
