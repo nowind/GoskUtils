@@ -6,7 +6,8 @@ import (
 
 
 type TablePair struct {
-	Name,Value string
+	Name string
+	Value interface{}
 }
 type tableitem struct {
 	TablePair
@@ -95,8 +96,8 @@ func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
 func NewMulCheckedList(d map[string]string) *MulCheckedList{
 	return NewMulCheckedListSort(d,nil)
 }
-func (self *MulCheckedList)SelPairList()  []TablePair{
-	ret:=make([]TablePair,0,len(self.mh.items))
+func (self *MulCheckedList)SelPairList()  []interface{}{
+	ret:=make([]interface{},0,len(self.mh.items))
 	for _,v := range self.mh.items{
 		if v._checked {
 			ret=append(ret,v.TablePair)
@@ -104,8 +105,8 @@ func (self *MulCheckedList)SelPairList()  []TablePair{
 	}
 	return ret
 }
-func (self *MulCheckedList)SelList() []string{
-	ret:=make([]string,0,len(self.mh.items))
+func (self *MulCheckedList)SelList() []interface{}{
+	ret:=make([]interface{},0,len(self.mh.items))
 	for _,v := range self.mh.items{
 		if v._checked {
 			ret=append(ret,v.Name)
@@ -113,8 +114,8 @@ func (self *MulCheckedList)SelList() []string{
 	}
 	return ret
 }
-func (self *MulCheckedList)SelValList() []string{
-	ret:=make([]string,0,len(self.mh.items))
+func (self *MulCheckedList)SelValList() []interface{}{
+	ret:=make([]interface{},0,len(self.mh.items))
 	for _,v := range self.mh.items{
 		if v._checked {
 			ret=append(ret,v.Value)
