@@ -1,12 +1,15 @@
 package skUtils
 
-import "github.com/andlabs/ui"
+import (
+	"github.com/andlabs/ui"
+)
 
 
-
+type TablePair struct {
+	Name,Value string
+}
 type tableitem struct {
-	name string
-	value string
+	TablePair
 	_checked bool
 }
 type tablehandler struct {
@@ -36,7 +39,7 @@ func (self *tablehandler) CellValue(m *ui.TableModel, row, column int) ui.TableV
 		}
 		return ui.TableFalse
 	}
-	return ui.TableString(self.items[row].name)
+	return ui.TableString(self.items[row].Name)
 }
 
 func (self *tablehandler) SetCellValue(m *ui.TableModel, row, column int, value ui.TableValue) {
@@ -57,14 +60,18 @@ func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
 	mh.datas= map[string]*tableitem{}
 	if sorted==nil{
 		for k,v:=range d{
-			it:=&tableitem{name:k,value:v,_checked:false}
+			it:=&tableitem{_checked:false,}
+			it.Name=k
+			it.Value=v
 			mh.items = append(mh.items, it)
 			mh.datas[k]=it
 		}
 	} else {
 		for _,k:=range sorted{
 			if v,ok:=d[k];ok{
-				it:=&tableitem{name:k,value:v,_checked:false}
+				it:=&tableitem{_checked:false,}
+				it.Name=k
+				it.Value=v
 				mh.items = append(mh.items, it)
 				mh.datas[k]=it
 			}
@@ -88,11 +95,29 @@ func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
 func NewMulCheckedList(d map[string]string) *MulCheckedList{
 	return NewMulCheckedListSort(d,nil)
 }
-func (self *MulCheckedList)SelList()  map[string]string{
-	ret:=make(map[string]string)
+func (self *MulCheckedList)SelPairList()  []TablePair{
+	ret:=make([]TablePair,0,len(self.mh.items))
 	for _,v := range self.mh.items{
 		if v._checked {
-			ret[v.name]=v.value
+			ret=append(ret,v.TablePair)
+		}
+	}
+	return ret
+}
+func (self *MulCheckedList)SelList() []string{
+	ret:=make([]string,0,len(self.mh.items))
+	for _,v := range self.mh.items{
+		if v._checked {
+			ret=append(ret,v.Name)
+		}
+	}
+	return ret
+}
+func (self *MulCheckedList)SelValList() []string{
+	ret:=make([]string,0,len(self.mh.items))
+	for _,v := range self.mh.items{
+		if v._checked {
+			ret=append(ret,v.Value)
 		}
 	}
 	return ret
