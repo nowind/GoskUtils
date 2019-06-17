@@ -123,10 +123,17 @@ func (self *MulCheckedList)SelValList() []interface{}{
 	}
 	return ret
 }
-func (self *MulCheckedList) SelAll(){
+func (self *MulCheckedList) sel(b bool){
 	for i,d:=range self.mh.items{
-		d._checked=true
+		d._checked=b
 		self.m.RowChanged(i)
 	}
+}
+func (self *MulCheckedList) SelAll(){
+	self.sel(true)
+
+}
+func (self *MulCheckedList) UnSelAll(){
+	self.sel(false)
 
 }
