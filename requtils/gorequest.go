@@ -3,10 +3,11 @@ package requtils
 import (
 	"github.com/json-iterator/go"
 	"github.com/parnurzeal/gorequest"
+	"net/http"
 )
 
 type Response struct{
-	gorequest.Response
+	*http.Response
 }
 
 var	BUF_LEN int64=5000
