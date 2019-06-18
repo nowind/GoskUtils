@@ -172,3 +172,6 @@ func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]stri
 func (self *HARParser) GetUrl() string{
 	return strings.ToLower(self.url)
 }
+func (self *HARParser) UrlContains(s string) bool {
+	return strings.Index(self.GetUrl(),s)>-1
+}
