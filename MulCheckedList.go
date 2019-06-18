@@ -20,8 +20,9 @@ type tablehandler struct {
 
 func (self *tablehandler)  ColumnTypes(m *ui.TableModel) []ui.TableValue{
 		return []ui.TableValue{
-			ui.TableTrue,
+			ui.TableFalse,
 			ui.TableString(""),
+			ui.TableString(" "),
 		}
 }
 
@@ -34,11 +35,11 @@ func (self *tablehandler) CellValue(m *ui.TableModel, row, column int) ui.TableV
 	if len(self.items) <= row{
 		panic("unreach")
 	}
-	if column ==0{
+	if column == 2 {
 		if self.items[row]._checked{
-			return ui.TableTrue
+			return ui.TableString("X")
 		}
-		return ui.TableFalse
+		return ui.TableString(" ")
 	}
 	return ui.TableString(self.items[row].Name)
 }
@@ -47,7 +48,11 @@ func (self *tablehandler) SetCellValue(m *ui.TableModel, row, column int, value 
 	if len(self.items) <= row{
 		panic("unreach")
 	}
-	self.items[row]._checked= bool(value.(ui.TableInt)==ui.TableTrue)
+	if self.items[row]._checked{
+		self.items[row]._checked= false
+	}else{
+		self.items[row]._checked= true
+	}
 	m.RowChanged(row)
 }
 
@@ -85,9 +90,9 @@ func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
 	table := ui.NewTable(&ui.TableParams{
 		Model:                         model,
 	})
-	table.AppendCheckboxColumn("",
-		0, ui.TableModelColumnAlwaysEditable)
-	table.AppendTextColumn("",1,ui.TableModelColumnNeverEditable, nil)
+	table.AppendButtonColumn("",
+		2,ui.TableModelColumnAlwaysEditable)
+	table.AppendTextColumn("",1,ui.TableModelColumnNeverEditable,nil)
 	m.Table=table
 	m.mh=mh
 	m.m=model
@@ -131,7 +136,6 @@ func (self *MulCheckedList) sel(b bool){
 }
 func (self *MulCheckedList) SelAll(){
 	self.sel(true)
-
 }
 func (self *MulCheckedList) UnSelAll(){
 	self.sel(false)
