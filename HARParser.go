@@ -3,6 +3,7 @@ package skUtils
 import (
 	"bufio"
 	"github.com/json-iterator/go"
+	utils "github.com/nowind/GoskUtils/requtils"
 	"github.com/parnurzeal/gorequest"
 	"net/http"
 	"net/url"
@@ -137,7 +138,7 @@ func (self *HARParser) GenEnv(request *gorequest.SuperAgent,genHeader []string) 
 	}
 	return request
 }
-func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]string) * http.Response {
+func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]string) * utils.Response {
 	if request==nil {
 		request=self.GenEnv(nil,nil)
 	}else{
@@ -167,7 +168,7 @@ func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]stri
 	if err!=nil{
 		return nil
 	}
-	return resp
+	return utils.ResponseWrap(resp)
 }
 func (self *HARParser) GetUrl() string{
 	return strings.ToLower(self.url)
