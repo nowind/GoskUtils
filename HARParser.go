@@ -42,12 +42,13 @@ func NewHARParserWithNo(path string, no int) *HARParser {
 		ret.method = ent.Get("method").ToString()
 		ret.url = ent.Get("url").ToString()
 		// 以下要处理头
-		headers := ent.Get("headers").GetInterface().([]interface {})
+		headers:=ent.Get("headers")
+		headersCount := headers.Size()
 		ret.Headers= map[string][]string{}
-		for _, header := range headers {
-			_header:=header.(map[string]interface {})
-			name := _header["name"].(string)
-			value := _header["value"].(string)
+		for i:=0;i<headersCount;i++ {
+			_header:=headers.Get(i)
+			name := _header.Get("name").ToString()
+			value := _header.Get("value").ToString()
 				if v, ok := ret.Headers[name]; ok {
 					ret.Headers[name] = append(v, value)
 				} else {
@@ -57,12 +58,12 @@ func NewHARParserWithNo(path string, no int) *HARParser {
 
 		//处理url查询
 		if ent.Get("queryString").ValueType() != jsoniter.InvalidValue {
-			queryString := ent.Get("queryString").GetInterface().([]interface {})
+			queryString := ent.Get("queryString")
 			ret.QueryString = map[string]string{}
-			for _, queryItem := range queryString {
-				_queryItem:=queryItem.(map[string]interface {})
-				name:= _queryItem["name"].(string)
-				value := _queryItem["value"].(string)
+			for i:=0;i<queryString.Size();i++ {
+				_queryItem:=queryString.Get(i)
+				name:= _queryItem.Get("name").ToString()
+				value := _queryItem.Get("value").ToString()
 				ret.QueryString[name] = value
 
 			}
@@ -71,12 +72,12 @@ func NewHARParserWithNo(path string, no int) *HARParser {
 		if ent.Get("postData","mimeType").ValueType() != jsoniter.InvalidValue {
 			ret.mime=ent.Get("postData","mimeType").ToString()
 			if strings.Contains(ret.mime,"x-www-form-urlencoded"){
-				pParmas:=ent.Get("postData","params").GetInterface().([]interface {})
+				pParmas:=ent.Get("postData","params")
 				ret.PostParmas= map[string]string{}
-				for _,v:=range pParmas{
-					_v:=v.(map[string]interface {})
-					name := _v["name"].(string)
-					value:= _v["value"].(string)
+				for i:=0;i<pParmas.Size();i++{
+					_v:=pParmas.Get(i)
+					name := _v.Get("name").ToString()
+					value:= _v.Get("value").ToString()
 					ret.PostParmas[name] = value
 
 				}
