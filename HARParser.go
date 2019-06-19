@@ -3,9 +3,7 @@ package skUtils
 import (
 	"bufio"
 	"github.com/json-iterator/go"
-	utils "github.com/nowind/GoskUtils/requtils"
 	"github.com/parnurzeal/gorequest"
-	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -138,7 +136,7 @@ func (self *HARParser) GenEnv(request *gorequest.SuperAgent,genHeader []string) 
 	}
 	return request
 }
-func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]string) * utils.Response {
+func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]string) * gorequest.SuperAgent {
 	if request==nil {
 		request=self.GenEnv(nil,nil)
 	}else{
@@ -146,33 +144,26 @@ func (self *HARParser) Repeat(request *gorequest.SuperAgent,para map[string]stri
 		request.Url=self.url
 		request.Errors=nil
 	}
-	var resp * http.Response
-	var err []error
 	switch strings.ToLower(self.method) {
 		case "post":
 			pd:=self.Postdata
 			if para!=nil {
 				pd=self.ReGenPayload(para)
 			}
-			resp,_,err=request.Send(pd).End()
-			break
+			return request.Send(pd)
 		case "get":
 			url:=self.url
 			if para!=nil{
 				url=self.ReGenUrl(para)
 			}
 			request.Url=url
-			resp,_,err=request.End()
-			break
+			return request
 	}
-	if err!=nil{
-		return nil
-	}
-	return utils.ResponseWrap(resp)
+	return request
 }
 func (self *HARParser) GetUrl() string{
 	return strings.ToLower(self.url)
 }
 func (self *HARParser) UrlContains(s string) bool {
-	return strings.Index(self.GetUrl(),s)>-1
+	return strings.Contains(self.GetUrl(),s)
 }
