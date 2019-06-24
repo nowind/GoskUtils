@@ -2,7 +2,6 @@ package HashSet
 
 import (
 	"fmt"
-	"github.com/modern-go/reflect2"
 	"reflect"
 )
 
@@ -21,7 +20,7 @@ func (self *HashSet) Add(a interface{}){
 	self.m[a]=true
 }
 func (self *HashSet) AddAll(a interface{}) error{
-	if reflect2.TypeOf(a).Kind()==reflect.Slice {
+	if reflect.ValueOf(a).Kind()==reflect.Slice {
 		b:=a.([]interface{})
 		for _, c := range b {
 			self.m[c] = true
