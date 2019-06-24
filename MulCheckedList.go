@@ -1,6 +1,7 @@
 package skUtils
 
 import (
+	"fmt"
 	"github.com/andlabs/ui"
 )
 
@@ -33,7 +34,7 @@ func (self *tablehandler)  NumRows(m *ui.TableModel) int{
 
 func (self *tablehandler) CellValue(m *ui.TableModel, row, column int) ui.TableValue {
 	if len(self.items) <= row{
-		panic("unreach")
+		panic(fmt.Sprintf("unreach row:%d ,but len:%d\n",row,len(self.items)))
 	}
 	if column == 2 {
 		if self.items[row]._checked{
@@ -46,7 +47,7 @@ func (self *tablehandler) CellValue(m *ui.TableModel, row, column int) ui.TableV
 
 func (self *tablehandler) SetCellValue(m *ui.TableModel, row, column int, value ui.TableValue) {
 	if len(self.items) <= row{
-		panic("unreach")
+		panic(fmt.Sprintf("unreach row:%d ,but len:%d\n",row,len(self.items)))
 	}
 	if self.items[row]._checked{
 		self.items[row]._checked= false
@@ -61,30 +62,42 @@ type MulCheckedList  struct{
 	mh *tablehandler
 	m *ui.TableModel
 }
-func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
-	mh := new(tablehandler)
-	mh.datas= map[string]*tableitem{}
+func _loadData(d map[string]string,sorted []string) ([]*tableitem,map[string]*tableitem){
+	var retd []*tableitem
+	retm:=map[string]*tableitem{}
 	if sorted==nil{
+		retd=make([]*tableitem,len(d))
+		i:=0
 		for k,v:=range d{
 			it:=&tableitem{_checked:false,}
 			it.Name=k
 			it.Value=v
-			mh.items = append(mh.items, it)
-			mh.datas[k]=it
+			retd[i]=it
+			i++
+			retm[k]=it
 		}
 	} else {
-		for _,k:=range sorted{
+		retd=make([]*tableitem,len(sorted))
+		lend:=0
+		for i,k:=range sorted{
 			if v,ok:=d[k];ok{
 				it:=&tableitem{_checked:false,}
 				it.Name=k
 				it.Value=v
-				mh.items = append(mh.items, it)
-				mh.datas[k]=it
+				retd[i]=it
+				retm[k]=it
+				lend++
 			}
 
 		}
+		retd=retd[:lend]
 	}
+	return retd,retm
+}
 
+func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
+	mh := new(tablehandler)
+	mh.items,mh.datas= _loadData(d,sorted)
 	model := ui.NewTableModel(mh)
 	m:=new(MulCheckedList)
 	table := ui.NewTable(&ui.TableParams{
@@ -139,5 +152,11 @@ func (self *MulCheckedList) SelAll(){
 }
 func (self *MulCheckedList) UnSelAll(){
 	self.sel(false)
+
+}
+func (self *MulCheckedList) Change(d map[string]string,sorted []string){
+	//oldLen:=len(self.mh.items)
+	self.mh.items,self.mh.datas=_loadData(d,sorted)
+	self.m.RowInserted(0)
 
 }

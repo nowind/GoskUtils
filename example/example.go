@@ -24,38 +24,11 @@ func mainUi(){
 	b:=ui.NewButton("OK")
 	h:=ui.NewHorizontalBox()
 	h.SetPadded(true)
-	c:=0
-	l:=skUtils.NewIni(`e:\tmp\conf.ini`)
-	p:=l.Get("act")
-	j:=skUtils.NewMulCheckedList(p)
+	j:=skUtils.NewMulCheckedListSort(map[string]string{"a":"b"},[]string{"a"})
 	b.OnClicked(func(button *ui.Button) {
-		asy.Println("hi,world")
-		skUtils.NewTimeInterval(func(d interface{}) (i int, e error) {
-			asy.Println("dong..")
-			return -1,nil
-		}).SetTime(0,48,0).SetBeg(func() {
-			asy.Println("begin")
-		}).SetEnd(func() {
-			asy.Println("end")
-		}).SetBefRun(func(d interface{}) (i int, e error) {
-			if c<10{
-				asy.Printf("%d \n",c)
-				c++
-			}
-			return 0,nil
-		})
-		asy.Println(j.SelList())
-		har:=skUtils.NewHARParser(`d:\tmp\1.har`)
-		k:=har.Repeat(nil,nil)
-		d:=make([]byte,5000,5000)
-		i,_:=k.Body.Read(d)
-		asy.Println(string(d[:i]))
+		j.Change(map[string]string{"a":"b","b":"c"},[]string{"a","b"})
 	})
-	cc:=[]interface{}{"1","8","4"}
-	skUtils.NewMultiTask(func(d interface{}) (i int, e error) {
-		asy.Println(d)
-		return -1,nil
-	}).SetTime(0,50,0).SetTimeInt(1000,1000).RunWith(cc)
+
 	v.Append(b,false)
 	h.Append(v,false)
 
