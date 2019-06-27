@@ -1,6 +1,7 @@
 package arrays
 
 import (
+	"github.com/nowind/GoskUtils/stringmap"
 	"reflect"
 )
 
@@ -36,4 +37,11 @@ func InInt(b []int,a int) bool{
 		}
 	}
 	return false
+}
+func ToStringMap(a []string,f func (string) string) stringmap.StringMap{
+	ret:=make(map[string]string)
+	for _,i:=range a{
+		ret[i]=f(i)
+	}
+	return ret
 }

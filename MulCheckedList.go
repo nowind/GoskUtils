@@ -13,10 +13,12 @@ type TablePair struct {
 type tableitem struct {
 	TablePair
 	_checked bool
+
 }
 type tablehandler struct {
 	items []*tableitem
 	datas map[string]*tableitem
+	size int
 }
 
 func (self *tablehandler)  ColumnTypes(m *ui.TableModel) []ui.TableValue{
@@ -29,7 +31,7 @@ func (self *tablehandler)  ColumnTypes(m *ui.TableModel) []ui.TableValue{
 
 
 func (self *tablehandler)  NumRows(m *ui.TableModel) int{
-	return len(self.items)
+	return self.size
 }
 
 func (self *tablehandler) CellValue(m *ui.TableModel, row, column int) ui.TableValue {
@@ -57,6 +59,16 @@ func (self *tablehandler) SetCellValue(m *ui.TableModel, row, column int, value 
 	m.RowChanged(row)
 }
 
+func (self *tablehandler) changeDiff(d map[string]string,sorted []string){
+	for _,i:=range sorted {
+		if _,ok:=self.datas[i];ok{
+			continue
+		}
+		if _,ok:=d[i];ok{
+			//self.datas[i]=&tableitem{TablePair{}}
+		}
+	}
+}
 type MulCheckedList  struct{
 	*ui.Table
 	mh *tablehandler
@@ -98,6 +110,7 @@ func _loadData(d map[string]string,sorted []string) ([]*tableitem,map[string]*ta
 func NewMulCheckedListSort(d map[string]string,sorted []string) *MulCheckedList{
 	mh := new(tablehandler)
 	mh.items,mh.datas= _loadData(d,sorted)
+	mh.size=len(mh.items)
 	model := ui.NewTableModel(mh)
 	m:=new(MulCheckedList)
 	table := ui.NewTable(&ui.TableParams{
@@ -154,9 +167,23 @@ func (self *MulCheckedList) UnSelAll(){
 	self.sel(false)
 
 }
-func (self *MulCheckedList) Change(d map[string]string,sorted []string){
-	//oldLen:=len(self.mh.items)
-	self.mh.items,self.mh.datas=_loadData(d,sorted)
-	self.m.RowInserted(0)
 
+func (self *MulCheckedList) Change(d map[string]string,sorted []string){
+	oldLen:=len(self.mh.items)
+	self.mh.items,self.mh.datas=_loadData(d,sorted)
+	newLen:=len(self.mh.items)
+	self.mh.size=(len(self.mh.items)-1)
+	det:=newLen-oldLen
+	f:=self.m.RowInserted
+	if det<0{
+		f=self.m.RowDeleted
+		det=-det
+	}
+	for i:=0;i<det;i++{
+		f(0)
+	}
+	self.mh.size=(len(self.mh.items))
+	for i:=0;i<len(self.mh.items);i++{
+		self.m.RowChanged(i)
+	}
 }

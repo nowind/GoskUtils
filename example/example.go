@@ -26,10 +26,11 @@ func mainUi(){
 	h.SetPadded(true)
 	j:=skUtils.NewMulCheckedListSort(map[string]string{"a":"b"},[]string{"a"})
 	b.OnClicked(func(button *ui.Button) {
-		j.Change(map[string]string{"a":"b","b":"c"},[]string{"a","b"})
+		asy.Println(j.SelList())
+		j.Change(map[string]string{"a":"b","b":"c"},[]string{})
 	})
 
-	v.Append(b,false)
+	v.Append(b,true)
 	h.Append(v,false)
 
 
