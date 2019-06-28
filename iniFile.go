@@ -15,6 +15,13 @@ func  NewIni(path string)  *IniFile{
 	ret.iniF=f
 	return ret
 }
+func (self *IniFile) ReGetSeq(sec string) (map[string]string,[]string){
+	if self.iniF.Reload()!=nil{
+		return make(map[string]string),[]string{}
+	}
+	m,s:=self.GetSeq(sec)
+	return m,s
+}
 func (self *IniFile) GetSeq(sec string) (map[string]string,[]string){
 	s,err:=self.iniF.GetSection(sec)
 	if err==nil{
