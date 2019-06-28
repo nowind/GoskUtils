@@ -19,8 +19,8 @@ func (self *IniFile) GetSeq(sec string) (map[string]string,[]string){
 	s,err:=self.iniF.GetSection(sec)
 	if err==nil{
 		k:=make([]string,len(s.Keys()))
-		for _,i:=range s.Keys(){
-			k=append(k,i.Name())
+		for i,v:=range s.Keys(){
+			k[i]=v.Name()
 		}
 		return s.KeysHash(),k
 	}
