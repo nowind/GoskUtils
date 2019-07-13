@@ -172,13 +172,14 @@ func (self *MulCheckedList) Change(d map[string]string,sorted []string){
 	oldLen:=len(self.mh.items)
 	self.mh.items,self.mh.datas=_loadData(d,sorted)
 	newLen:=len(self.mh.items)
-	self.mh.size=(len(self.mh.items)-1)
+	self.mh.size=1
 	det:=newLen-oldLen
 	f:=self.m.RowInserted
 	if det<0{
 		f=self.m.RowDeleted
 		det=-det
 	}
+	//effect ui change
 	for i:=0;i<det;i++{
 		f(0)
 	}
@@ -186,4 +187,5 @@ func (self *MulCheckedList) Change(d map[string]string,sorted []string){
 	for i:=0;i<len(self.mh.items);i++{
 		self.m.RowChanged(i)
 	}
+	//data refill
 }
