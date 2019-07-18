@@ -138,6 +138,9 @@ func (self *HARParser) GenEnv(request *gorequest.SuperAgent,genHeader []string) 
 	return request
 }
 func (self *HARParser)CopyPost() map[string]string {
+	if self.PostParmas==nil{
+		return nil
+	}
 	m:=make(map[string]string)
 	for i,k :=range self.PostParmas{
 		m[i]=k
@@ -145,6 +148,9 @@ func (self *HARParser)CopyPost() map[string]string {
 	return m
 }
 func (self *HARParser)CopyQuery() map[string]string {
+	if self.QueryString==nil{
+		return nil
+	}
 	m:=make(map[string]string)
 	for i,k :=range self.QueryString{
 		m[i]=k
